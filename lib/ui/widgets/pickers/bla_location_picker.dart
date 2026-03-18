@@ -10,7 +10,7 @@ import '../../theme/theme.dart';
 ///
 class BlaLocationPicker extends StatefulWidget {
   const BlaLocationPicker({super.key, required this.initLocation});
-
+  
   final Location? initLocation; // optional initial location
 
   @override
