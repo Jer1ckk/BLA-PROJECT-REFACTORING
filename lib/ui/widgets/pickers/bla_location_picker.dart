@@ -3,15 +3,17 @@ import 'package:blabla/ui/widgets/display/bla_divider.dart';
 import 'package:flutter/material.dart';
 import '../../../model/ride/locations.dart';
 import '../../theme/theme.dart';
-import 'package:provider/provider.dart';
 
-///
-/// A  Location Picker is a view to pick a Location:
-///
+/// A Location Picker is a view to pick a Location:
 class BlaLocationPicker extends StatefulWidget {
-  const BlaLocationPicker({super.key, required this.initLocation});
+  const BlaLocationPicker({
+    super.key,
+    required this.initLocation,
+    required this.locationRepository,
+  });
 
   final Location? initLocation; // optional initial location
+  final LocationRepository locationRepository;
 
   @override
   State<BlaLocationPicker> createState() => _BlaLocationPickerState();
@@ -32,11 +34,9 @@ class _BlaLocationPickerState extends State<BlaLocationPicker> {
   void initState() {
     super.initState();
 
-    // Initilize the search bar if any initial location
+    // Initialize the search bar if any initial location
     if (widget.initLocation != null) {
-      setState(() {
-        currentSearchText = widget.initLocation!.name;
-      });
+      currentSearchText = widget.initLocation!.name;
     }
   }
 
@@ -47,12 +47,12 @@ class _BlaLocationPickerState extends State<BlaLocationPicker> {
   }
 
   List<Location> get filteredLocation {
-    final locationRepository = context.read<LocationRepository>();
-
     if (currentSearchText.length < 2) {
       return [];
     }
-    return locationRepository
+
+    // Use constructor-injected repository
+    return widget.locationRepository
         .availableLocations()
         .where(
           (location) => location.name.toUpperCase().contains(
@@ -78,9 +78,7 @@ class _BlaLocationPickerState extends State<BlaLocationPicker> {
               onBackTap: onBackTap,
               onSearchChanged: onSearchChanged,
             ),
-
-            SizedBox(height: 20),
-
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: filteredLocation.length,
@@ -147,7 +145,6 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
       ),
       child: Row(
         children: [
-          // BACK ICON
           IconButton(
             onPressed: widget.onBackTap,
             icon: Icon(
@@ -156,29 +153,25 @@ class _LocationSearchBarState extends State<LocationSearchBar> {
               size: 16,
             ),
           ),
-
-          // TEXT FILED
           Expanded(
             child: TextField(
-              focusNode: _focusNode, // Keep focus
+              focusNode: _focusNode,
               controller: _searchController,
               onChanged: widget.onSearchChanged,
               style: TextStyle(color: BlaColors.textLight),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Any city, street...",
-                border: InputBorder.none, // No border
-                filled: false, // No background fill
+                border: InputBorder.none,
+                filled: false,
               ),
             ),
           ),
-
-          // CLOSE ICON
           searchIsNotEmpty
               ? IconButton(
                   onPressed: onClearTap,
                   icon: Icon(Icons.close, color: BlaColors.iconLight, size: 16),
                 )
-              : SizedBox.shrink(), // Hides the icon if text field is empty
+              : const SizedBox.shrink(),
         ],
       ),
     );
@@ -189,11 +182,9 @@ class LocationTile extends StatelessWidget {
   const LocationTile({super.key, required this.location, required this.onTap});
 
   final Location location;
-
   final ValueChanged<Location> onTap;
 
   String get title => location.name;
-
   String get subTitle => location.country.name;
 
   @override
@@ -203,20 +194,18 @@ class LocationTile extends StatelessWidget {
         ListTile(
           onTap: () => onTap(location),
           leading: Icon(Icons.history, color: BlaColors.iconLight),
-
           title: Text(title, style: BlaTextStyles.body),
           subtitle: Text(
             subTitle,
             style: BlaTextStyles.label.copyWith(color: BlaColors.textLight),
           ),
-
           trailing: Icon(
             Icons.arrow_forward_ios,
             color: BlaColors.iconLight,
             size: 16,
           ),
         ),
-        BlaDivider(),
+        const BlaDivider(),
       ],
     );
   }

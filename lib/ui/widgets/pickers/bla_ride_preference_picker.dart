@@ -1,6 +1,8 @@
+import 'package:blabla/data/repositories/location/location_repository.dart';
 import 'package:blabla/ui/widgets/buttons/bla_button.dart';
 import 'package:blabla/ui/widgets/display/bla_divider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../model/ride/locations.dart';
 import '../../../model/ride_pref/ride_pref.dart';
@@ -80,7 +82,10 @@ class _BlaRidePreferencePickerState extends State<BlaRidePreferencePicker> {
     // 1- Select a location
     Location? selectedLocation = await Navigator.of(context).push<Location>(
       AnimationUtils.createBottomToTopRoute(
-        BlaLocationPicker(initLocation: departure),
+        BlaLocationPicker(
+          initLocation: departure,
+          locationRepository: context.read<LocationRepository>(),
+        ),
       ),
     );
 
@@ -96,7 +101,10 @@ class _BlaRidePreferencePickerState extends State<BlaRidePreferencePicker> {
     // 1- Select a arrival
     Location? selectedLocation = await Navigator.of(context).push<Location>(
       AnimationUtils.createBottomToTopRoute(
-        BlaLocationPicker(initLocation: arrival),
+        BlaLocationPicker(
+          initLocation: arrival,
+          locationRepository: context.read<LocationRepository>(),
+        ),
       ),
     );
 
