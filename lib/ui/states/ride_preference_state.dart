@@ -1,19 +1,37 @@
 import 'package:blabla/data/repositories/ride_preference/ride_preference_repository.dart';
+import 'package:blabla/model/ride_pref/ride_pref.dart';
 import 'package:flutter/material.dart';
 
-import '../../model/ride_pref/ride_pref.dart';
-
 class RidePreferenceState extends ChangeNotifier {
+  RidePreferenceRepository ridePreferenceRepository;
 
-  final RidePreferenceRepository ridePreferenceRepository;
-  RidePreferenceState({required this.ridePreferenceRepository});
-
-  RidePreference? _selectedPreference;
-  List<RidePreference> _preferenceHistory = [];
-
-  void init(){
-    _preferenceHistory = ridePreferenceRepository.loadRidePreference();
+  RidePreferenceState({required this.ridePreferenceRepository}) {
+    initHistory();
   }
+
+  RidePreference? _currentRidePreference;
+  List<RidePreference> _history = [];
+
+  RidePreference? get ridePreference => _currentRidePreference;
+  int get maxAllowedSeats => 8;
+
+  void initHistory() {
+    _history = List<RidePreference>.from(
+      ridePreferenceRepository.loadRidePreference(),
+    );
+    if (_history.isNotEmpty) {
+      _currentRidePreference = _history.last;
+    }
+  }
+
+  void setRidePreference(RidePreference ridePreference) {
+    if (_currentRidePreference == ridePreference) {
+      return;
+    }
+    _currentRidePreference = ridePreference;
+    _history.add(ridePreference);
+    notifyListeners();
+  }
+
+  List<RidePreference> get history => _history;
 }
-
-
