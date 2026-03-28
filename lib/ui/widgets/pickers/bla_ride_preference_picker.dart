@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 
 import '../../../model/ride/locations.dart';
 import '../../../model/ride_pref/ride_pref.dart';
-import '../../../services/ride_prefs_service.dart';
 import '../../../utils/animations_util.dart';
 import '../../../utils/date_time_utils.dart';
+import '../../states/ride_preference_state.dart';
 import '../../theme/theme.dart';
 import '../buttons/bla_icon_button.dart';
 import 'bla_location_picker.dart';
@@ -23,14 +23,13 @@ import 'bla_seat_picker.dart';
 ///
 class BlaRidePreferencePicker extends StatefulWidget {
   final RidePreference? initRidePreference; // optional initial preference.
+  final ValueChanged<RidePreference> onRidePreferenceSelected;
 
   const BlaRidePreferencePicker({
     super.key,
     this.initRidePreference,
     required this.onRidePreferenceSelected,
   });
-
-  final ValueChanged<RidePreference> onRidePreferenceSelected;
 
   @override
   State<BlaRidePreferencePicker> createState() =>
@@ -42,6 +41,7 @@ class _BlaRidePreferencePickerState extends State<BlaRidePreferencePicker> {
   late DateTime departureDate;
   Location? arrival;
   late int requestedSeats;
+  late RidePreferenceState ridePreferenceState; // history of sel pref
 
   // ----------------------------------
   // Initialize the Form attributes
@@ -122,7 +122,7 @@ class _BlaRidePreferencePickerState extends State<BlaRidePreferencePicker> {
       AnimationUtils.createRightToLeftRoute(
         BlaSeatPicker(
           initSeats: requestedSeats,
-          maxSeat: RidePrefsService.maxAllowedSeats,
+          maxSeat: ridePreferenceState.maxAllowedSeats,
         ),
       ),
     );
